@@ -39,18 +39,28 @@ static void foo(fcontext_transfer_t t)
     jump_fcontext(t.ctx, NULL);
 }
 
-int main()
-{
-    fcontext_stack_t s  = create_fcontext_stack(16 * 1024);
-    fcontext_stack_t s2 = create_fcontext_stack(0);
+fcontext_transfer_t f11(fcontext_transfer_t t_) {
+  printf("f11, from.ctx:%p  data:%d\n", t_.ctx, *(int*)t_.data);
+  return t_;
+}
 
-    ctx  = make_fcontext(s.sptr, s.ssize, foo);
-    ctx2 = make_fcontext(s2.sptr, s2.ssize, doo);
+void f12(fcontext_transfer_t from) {
+  printf("f12-1, from.ctx:%p \n", from.ctx);
+  from = jump_fcontext(from.ctx, from.data);
+  printf("f12-2, from.ctx:%p \n", from.ctx);
+  from = jump_fcontext(from.ctx, from.data);
+  printf("f12-leave, from.ctx:%p \n", from.ctx);
+}
 
-    jump_fcontext(ctx, NULL);
-    puts("END");
-
+int main() {
+    fcontext_stack_t s = create_fcontext_stack(0);
+    fcontext_t ctx = make_fcontext(s.sptr, s.ssize, f12);
+    printf("main-0, ctx:%p \n", ctx);
+    ctx = jump_fcontext(ctx, 0).ctx;
+    printf("main-1, ctx:%p \n", ctx);
+    int v = 12;
+    ctx = ontop_fcontext(ctx, &v, f11).ctx;
+    printf("main-ontop back, ctx:%p\n", ctx);
     destroy_fcontext_stack(&s);
-    destroy_fcontext_stack(&s2);
     return 0;
 }

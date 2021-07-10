@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(fcontext C)
 
-option(BUILD_TEST "build test app" 0)
+option(BUILD_TEST "build test app" ON)
 
 if (NOT CMAKE_MODULE_PATH)
     set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -87,3 +87,5 @@ if (BUILD_TEST)
     target_link_libraries(test_fcontext fcontext)
 endif()
 
+add_executable(bench_fcontext bench/bench.cc)
+target_link_libraries(bench_fcontext fcontext)

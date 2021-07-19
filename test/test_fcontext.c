@@ -40,16 +40,16 @@ static void foo(fcontext_transfer_t t)
 }
 
 fcontext_transfer_t f11(fcontext_transfer_t t_) {
-  printf("f11, from.ctx:%p  data:%d\n", t_.ctx, *(int*)t_.data);
+  printf("f11, ontop_ctx:%p  data:%d\n", t_.ctx, *(int*)t_.data);
   return t_;
 }
 
 void f12(fcontext_transfer_t from) {
-  printf("f12-1, from.ctx:%p \n", from.ctx);
+  printf("f12-1, main_coro:%p \n", from.ctx);
   from = jump_fcontext(from.ctx, from.data);
-  printf("f12-2, from.ctx:%p \n", from.ctx);
+  printf("f12-2, main_coro:%p \n", from.ctx);
   from = jump_fcontext(from.ctx, from.data);
-  printf("f12-leave, from.ctx:%p \n", from.ctx);
+  printf("f12-leave, main_coro:%p \n", from.ctx);
 }
 
 int main() {
